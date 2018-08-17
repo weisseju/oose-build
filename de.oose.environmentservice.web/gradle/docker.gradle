@@ -1,0 +1,19 @@
+apply from: "$rootDir/gradle/docker.gradle"
+
+
+
+createDockerfile {
+	dependsOn buildDeb
+	
+	from('java:8-jre')
+	maintainer('oose eG <info@oose.de>')
+		
+	String debName = 'build/distributions/' + file(buildDeb.outputs.files[0]).name;
+		
+	addFile(debName,"/tmp/"+ debName)
+	runCommand "dpkg -i /tmp/" + debName
+	exposePort 8090
+	exposePort 8091
+	defaultCommand("environmentservice-web")
+}
+

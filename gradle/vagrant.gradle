@@ -1,0 +1,9 @@
+task vagrantUp(type: Exec){
+    workingDir "$rootDir/gradle/vagrant"
+    commandLine "vagrant", "up", "--provision"
+}
+
+task vagrantDestroy(type: Exec){
+    workingDir "$rootDir/gradle/vagrant"
+    commandLine "vagrant", "destroy", "-f"
+}

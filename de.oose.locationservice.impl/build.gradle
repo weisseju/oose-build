@@ -1,0 +1,24 @@
+apply plugin: 'war'
+apply from: "$rootDir/gradle/eclipseWtp.gradle"
+
+apply from: "gradle/docker.gradle"
+apply from: "$rootDir/gradle/publicationWar.gradle"
+
+apply from: "gradle/systemtest.gradle"
+
+webAppDirName = 'WebContent'
+
+dependencies {
+    //our own
+    compile project(":de.oose.locationservice")
+    
+    //3rd party
+    compile("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion")    
+    
+    //not in war    
+    providedCompile("javax.ws.rs:javax.ws.rs-api:$javaxRestApiVersion")
+        
+    testCompile("org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.13")
+    
+}
+

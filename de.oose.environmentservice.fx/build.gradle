@@ -1,0 +1,37 @@
+
+apply plugin: 'eclipse'
+apply from: "$rootDir/gradle/javafx.gradle"
+
+eclipse.project {
+  	natures  'org.springframework.ide.eclipse.core.springnature'
+}
+
+javafx {
+    appID 'environmentservice.fx'
+    appName 'environmentserviceFXclient'
+    mainClass 'de.oose.environmentservice.fx.ShowEnvironment'
+    
+    
+    // this speeds up the build because no installer is built
+    // remove the line to build deb package or windows installer 
+    // using wix or innosetup
+    packaging = 'image'
+    
+}
+
+
+
+
+
+// make sure to apply after javafx configuration
+apply from: "$rootDir/gradle/publicationJavaFx.gradle"
+
+dependencies {
+	//our own
+    compile project(":de.oose.locationservice")
+    compile project(":de.oose.environmentservice")
+	//3rd party
+    compile("org.springframework:spring-web:$springVersion")
+    compile("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion")
+}
+

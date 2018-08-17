@@ -1,0 +1,23 @@
+
+endpoints:
+  shutdown:
+    enabled: true
+
+server:
+  port: 8090
+
+management:
+  port: 8091
+  address: 0.0.0.0
+
+locationservice:
+  url: http://localhost:8080/de.oose.locationservice.impl
+  
+ribbon:
+  eureka:
+   enabled: false
+
+environment:
+  ribbon:
+    listOfServers: http://localhost:8079
+    

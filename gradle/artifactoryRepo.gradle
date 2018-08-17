@@ -1,0 +1,23 @@
+
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'maven-publish'
+
+// override by defining -Dartifactory.contextUrl="some url"
+
+artifactory {
+	contextUrl = System.getProperty('artifactory.contextUrl')  ?:  "http://192.168.0.81:8081/artifactory"
+	publish {
+		repository {
+			repoKey = version.contains("SNAPSHOT") ? 'libs-snapshot-local' : 'libs-release-local'
+			username = "admin"
+			password = "password"
+			//maven = true
+		}
+		defaults {
+			publications ('mavenJava')
+		}
+	}
+}
+
+
+artifactoryPublish.dependsOn build

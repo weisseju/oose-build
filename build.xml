@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="project" default="target1">
+  
+  
+    <target name="target1" depends="target2" description="Super stuff">
+  
+    	<echo message="Super" />
+    </target>
+
+  
+    <target name="target2">
+    	<echo message="Prepare" />
+    </target>
+
+</project>

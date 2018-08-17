@@ -1,0 +1,10 @@
+apply from: "$rootDir/gradle/docker.gradle"
+
+createDockerfile {
+	dependsOn war
+	
+	from('tomcat:7-jre8')
+	maintainer('oose eG <info@oose.de>')
+		
+	addFile("build/libs/${project.name}-${version}.war","/usr/local/tomcat/webapps/${project.name}.war")
+}

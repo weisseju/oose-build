@@ -1,0 +1,23 @@
+
+
+sourceSets {
+	integrationTest {
+		java.srcDir file('src/test-integration/java')
+	}
+}
+
+dependencies {
+		integrationTestCompile sourceSets.main.output
+		integrationTestCompile configurations.testCompile
+		integrationTestCompile sourceSets.test.output
+		integrationTestRuntime configurations.testRuntime
+	}
+
+
+task integrationTest(type: Test) {
+	testClassesDir = sourceSets.integrationTest.output.classesDir
+	classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+//integrationTest.reports.html.destination = file("$buildDir/reports/integrationTests")
+//integrationTest.reports.junitXml.destination = file("$buildDir/integration-test-results")

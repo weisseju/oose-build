@@ -1,0 +1,31 @@
+
+task sourceJar(type: Jar) {
+	from sourceSets.main.allJava
+}
+
+task fxzip(type: Zip) {
+	
+	from "build/distributions/${javafx.appName}"
+	baseName = "${javafx.appName}"
+	classifier = "app"
+	extension = "zip"
+	
+}
+
+fxzip.dependsOn jfxDeploy
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			
+			artifact sourceJar {
+				classifier "sources"
+			}
+			
+			artifact fxzip {
+				classifier "app"
+			}
+		}
+	}
+}

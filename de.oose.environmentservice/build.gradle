@@ -1,0 +1,11 @@
+
+apply plugin: 'eclipse-wtp'
+apply from: "$rootDir/gradle/publicationJar.gradle"
+
+
+
+dependencies {
+    compile project(":de.oose.locationservice")
+}
+
+

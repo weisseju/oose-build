@@ -1,0 +1,31 @@
+locweb:
+  image: oose/de.oose.locationservice.web:1.0.0-SNAPSHOT
+  links:
+    - loci
+  ports:
+    - "8082:8080"
+  environment:
+    CATALINA_OPTS: -DlocationServiceUrl=http://loci:8080/de.oose.locationservice.impl
+   
+envweb:
+  image: oose/de.oose.environmentservice.web:1.0.0-SNAPSHOT
+  links:
+    - loci
+    - envi
+  ports:
+    - "8090:8090"
+  environment:   
+    locationservice.url: http://loci:8080/de.oose.locationservice.impl
+    environment.ribbon.listOfServers: http://envi:8080 
+   
+loci:
+  ports:
+    - "8079:8080"
+  image: oose/de.oose.locationservice.impl:1.0.0-SNAPSHOT
+  
+envi:
+  ports:
+    - "8078:8080"
+  image: oose/de.oose.environmentservice.impl:1.0.0-SNAPSHOT
+
+  

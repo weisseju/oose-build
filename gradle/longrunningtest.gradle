@@ -1,0 +1,23 @@
+
+
+sourceSets {
+	longrunningTest {
+		java.srcDir file('src/test-longrunning/java')
+	}
+}
+
+dependencies {
+	longrunningTestCompile sourceSets.main.output
+	longrunningTestCompile configurations.testCompile
+	longrunningTestCompile sourceSets.test.output
+	longrunningTestRuntime configurations.testRuntime
+}
+
+task longrunningTest(type: Test) {
+	testClassesDir = sourceSets.longrunningTest.output.classesDir
+	classpath = sourceSets.longrunningTest.runtimeClasspath
+}
+
+longrunningTest.reports.html.destination = file("$buildDir/reports/longrunningTests")
+longrunningTest.reports.junitXml.destination = file("$buildDir/longrunning-test-results")
+	

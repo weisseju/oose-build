@@ -1,0 +1,1 @@
+<% response.sendRedirect("/de.oose.locationservice.web/view/location.xhtml"); %>

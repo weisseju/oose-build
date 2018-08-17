@@ -1,0 +1,26 @@
+apply plugin: 'war'
+apply from: "$rootDir/gradle/eclipseWtp.gradle"
+
+apply from: "gradle/docker.gradle"
+apply from: "$rootDir/gradle/publicationWar.gradle"
+
+webAppDirName = 'WebContent'
+
+dependencies {
+	//our own
+    compile project(":de.oose.locationservice")
+
+	//3rd party
+    compile("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion")
+
+	//exclude from war
+	providedCompile("javax:javaee-api:$javaxEEApiVersion")	
+	providedCompile("org.apache.cxf:cxf-rt-frontend-jaxrs:$apacheCxfVersion")
+	
+	// to test the ee parts locally
+	testRuntime("javax:javaee-api:$javaxEEApiVersion")
+	testRuntime("javax.servlet:javax.servlet-api:$javaxServletApiVersion")
+  	testCompile("org.apache.cxf:cxf-rt-transports-local:$apacheCxfVersion")
+	    
+}
+

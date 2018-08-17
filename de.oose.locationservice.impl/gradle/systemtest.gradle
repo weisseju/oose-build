@@ -1,0 +1,46 @@
+
+import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
+
+
+sourceSets {
+	systemTest {
+		java.srcDir file('src/test-system/java')
+	}
+}
+
+
+dependencies {
+		systemTestCompile sourceSets.main.output
+		systemTestCompile configurations.testCompile
+		systemTestCompile sourceSets.test.output
+		systemTestCompile configurations.testRuntime
+}
+
+
+
+/*
+
+task createMyAppContainer(type: DockerCreateContainer) {
+	dependsOn buildDocker
+	targetImageId { buildDocker.getImageId() }
+	portBindings = ['8085:8080']
+}
+
+ 
+task startMyAppContainer(type: DockerStartContainer) {
+	dependsOn createMyAppContainer
+	targetContainerId { createMyAppContainer.getContainerId() }
+}
+
+task stopMyAppContainer(type: DockerStopContainer) {
+	targetContainerId { createMyAppContainer.getContainerId() }
+}
+*/
+task systemTest(type: Test) {
+	dependsOn startContainer
+	finalizedBy stopContainer
+	
+	testClassesDir = sourceSets.systemTest.output.classesDir
+	classpath = sourceSets.systemTest.runtimeClasspath
+}

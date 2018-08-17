@@ -1,0 +1,12 @@
+	
+apply plugin: 'org.sonarqube'
+
+
+sonarqube  {
+	properties  {
+		property "sonar.projectKey", "de.oose:jabu2"
+		property "sonar.projectName", "jabu2"
+		property "sonar.host.url", "http://localhost:9000/"		
+		property "sonar.scm.provider", "git"	
+	}
+}

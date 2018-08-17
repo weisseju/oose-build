@@ -1,0 +1,24 @@
+
+
+
+// override dir with -Doverride.deb_repo_dir="..."
+ext.deb_repo_dir = "."
+
+// PERSONAL DEBIAN REPO
+task copyToDebRepo(type: Copy) {
+	from(distsDir){
+		include '*.deb'
+	}
+	into "${deb_repo_dir}"
+}
+
+
+// override dir with -Doverride.deb_repo_base="..."
+ext.deb_repo_base = "."
+task updateDebRepo(type: Exec){
+	commandLine "bash", "-c", "dpkg-scanpackages ${deb_repo_base} | gzip -9c > ${deb_repo_base}/Packages.gz"
+}
+
+copyToDebRepo.dependsOn buildDeb
+updateDebRepo.dependsOn copyToDebRepo
+

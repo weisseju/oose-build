@@ -1,0 +1,27 @@
+apply plugin: 'nebula.ospackage'
+
+ospackage {
+	packageName = 'environmentservice-web'
+	arch = "amd64"
+	os = LINUX
+	
+	postInstall file('scripts/postInstall.sh')
+	postUninstall file('scripts/postUninstall.sh')
+	
+	from (bootRepackage.outputs.files) {
+		into 'lib'
+	}
+	// copy start-service into app's base-dir
+	from('scripts') {
+		exclude('postInstall.sh')
+		exclude('postUninstall.sh')
+		filter {
+			 it.replace('${version}', project.version)
+		}
+	}
+	into '/opt/environmentservice-web'
+}
+
+buildDeb.dependsOn bootRepackage
+
+apply from: "$rootDir/gradle/debRepo.gradle"

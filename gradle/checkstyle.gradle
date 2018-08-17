@@ -1,0 +1,25 @@
+apply plugin: 'checkstyle'
+
+
+checkstyle {
+	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+	
+	// warnings are irgnored (only logged and shown in reports), errors break the build
+	ignoreFailures = false
+	// when using a (central) suppress file, use this to replace a token in
+	// checkstyle.xml since absolute paths are required
+	// configProperties = ['baseDir': "$rootDir"]
+}
+
+task copyCheckstyle(type: Copy)  {
+	from "$rootDir/config/checkstyle/.checkstyle"
+	into project.projectDir
+	expand(project.properties)
+}
+
+eclipse.project {
+	natures 'net.sf.eclipsecs.core.CheckstyleNature'
+	buildCommand 'net.sf.eclipsecs.core.CheckstyleBuilder'
+}
+
+eclipseProject.dependsOn copyCheckstyle

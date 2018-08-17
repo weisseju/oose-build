@@ -1,0 +1,21 @@
+
+apply plugin: 'cpd'
+
+cpd {
+	toolVersion = '5.2.3'
+}
+
+cpdCheck {
+	ignoreFailures = true
+	skipLexicalErrors = true
+	reports {
+		text.enabled = false
+		xml.enabled = true
+	}
+
+	allprojects.findAll{ p ->
+		p.hasProperty('sourceSets') }.each{ p ->
+		p.sourceSets.all{ sourceSet ->
+			source sourceSet.allJava  }
+	}
+}

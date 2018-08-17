@@ -1,0 +1,3 @@
+include 'de.oose.locationservice','de.oose.locationservice.impl', 'de.oose.locationservice.web'
+include 'de.oose.environmentservice','de.oose.environmentservice.impl','de.oose.environmentservice.web'
+//,'de.oose.environmentservice.fx'

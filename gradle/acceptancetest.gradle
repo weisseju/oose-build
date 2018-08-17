@@ -1,0 +1,36 @@
+apply plugin: "groovy"
+
+sourceSets {
+    acceptanceTest {
+        groovy.srcDir file('src/test-acceptance/groovy')
+    }
+}
+
+dependencies {
+    acceptanceTestCompile sourceSets.main.output
+    acceptanceTestCompile configurations.testCompile
+    acceptanceTestCompile sourceSets.test.output
+    acceptanceTestRuntime configurations.testRuntime
+
+	// acceptanceTestCompile does not work for eclipse
+	
+    testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile "org.gebish:geb-core:$gebVersion"
+	testCompile "org.gebish:geb-spock:$gebVersion"
+    testCompile "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumFirefoxVersion"
+	testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumHtmlunitVersion"
+        
+    testCompile "org.spockframework:spock-core:$spockVersion"
+    testCompile "org.spockframework:spock-spring:$spockVersion"
+
+}
+
+task acceptanceTest(type: Test) {
+    testClassesDir = sourceSets.acceptanceTest.output.classesDir
+    classpath = sourceSets.acceptanceTest.runtimeClasspath
+    //dependsOn = [vagrantUp]
+    //finalizedBy = [vagrantDestroy]
+}
+
+//acceptanceTest.reports.html.destination = file("$buildDir/reports/acceptanceTests")
+//acceptanceTest.reports.junitXml.destination = file("$buildDir/acceptance-test-results")

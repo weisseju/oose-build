@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Environment</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h2>Environmental Information</h2>
+	
+	<p id="version" th:text="'Version ' + ${version}" />
+	<br />
+	
+	<p id="position" th:text="'Position ' + ${location?.position}" />
+	<br />
+	<p id="heading" th:text="'Heading ' + ${location?.heading}" />
+	<br />
+	<p id="time" th:text="'Time ' + ${location?.time}" />
+	<br />
+	<p id="country" th:text="'Country ' + ${environment?.country}" />
+	<br />
+	<p id="language" th:text="'Language ' + ${environment?.language}" />
+	<br />
+	<p id="weather" th:text="'Weather ' + ${environment?.weather}" />
+	<br />
+</body>
+</html>

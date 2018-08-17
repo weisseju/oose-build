@@ -1,0 +1,70 @@
+apply plugin: 'war'
+apply from: "$rootDir/gradle/eclipseWtp.gradle"
+
+apply from: "gradle/docker.gradle"
+apply from: "$rootDir/gradle/publicationWar.gradle"
+
+webAppDirName = 'WebContent'
+
+eclipse.project {
+  	natures 'org.springframework.ide.eclipse.core.springnature'
+}
+
+buildscript {
+	repositories {
+		maven {
+		  url "https://plugins.gradle.org/m2/"
+		}
+	  }
+	dependencies {
+		classpath 'gradle.plugin.com.boxfuse.client:flyway-release:4.0.3'
+		classpath group: 'org.postgresql', name: 'postgresql', version: '9.4.1208.jre7'
+	}
+}
+
+apply plugin: 'org.flywaydb.flyway'
+
+flyway {
+  user = 'admin'
+  password = 'admin'
+  url = 'jdbc:postgresql://localhost:5433/admin'
+  driver = 'org.postgresql.Driver'
+//  locations = ['filesystem:scripts']
+}
+
+
+
+
+
+//https://stackoverflow.com/questions/14742941/no-persistent-classes-found-when-integration-test-in-gradle
+//JPA Integrationtests require source and resources in same dir
+sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
+
+dependencies {
+	//our own
+    compile project(":de.oose.environmentservice")
+	
+	//3rd party
+    compile("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion")
+	
+	compile("org.springframework:spring-webmvc:$springVersion")
+
+	compile "org.springframework.data:spring-data-jpa:$springDataJpaVersion"
+	compile("org.springframework:spring-orm:$springVersion")
+	compile("org.aspectj:aspectjweaver:1.8.5")
+	compile "org.hibernate:hibernate-core:$hibernateVersion"
+	compile("org.apache.commons:commons-dbcp2:2.0.1")
+	compile("org.hsqldb:hsqldb:2.3.2")
+
+	compile("log4j:log4j:1.2.17")
+
+	//not in war
+    providedCompile("javax.ws.rs:javax.ws.rs-api:$javaxRestApiVersion")
+	providedCompile("javax.servlet:javax.servlet-api:$javaxServletApiVersion")
+	
+	//test
+	testCompile("org.springframework:spring-test:$springVersion")
+	testCompile('com.jayway.restassured:rest-assured:2.8.0')
+	testCompile('com.jayway.restassured:spring-mock-mvc:2.8.0')
+}
+

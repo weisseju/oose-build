@@ -1,0 +1,48 @@
+apply plugin: 'spring-boot'
+apply plugin: 'eclipse'
+
+apply from: "gradle/ospackage.gradle"
+apply from: "gradle/docker.gradle"
+apply from: "$rootDir/gradle/publicationJar.gradle"
+
+eclipse.project { natures  'org.springframework.ide.eclipse.core.springnature' }
+
+bootRepackage { classifier = "bootapp" }
+
+dependencies {
+	//our own
+	compile project(':de.oose.environmentservice')
+	//3rd party
+	compile("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion")
+	compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
+	compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
+	compile("org.springframework.cloud:spring-cloud-starter-feign:$springCloudVersion")
+	compile("org.springframework.cloud:spring-cloud-starter-hystrix:$springCloudVersion")
+
+
+	compile('com.netflix.feign:feign-jackson:8.1.1')
+
+
+	//for HighPerformance xml use
+	//compile("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
+
+	//tests
+	testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+	testCompile("org.springframework:spring-test:$springVersion")
+
+	
+	// integrationTestCompile does not work for eclipse
+	
+	testCompile('org.mortbay.jetty:jetty:6.1.26') {
+		exclude group: 'org.mortbay.jetty', module:'servlet-api'
+	}
+	testCompile('org.json:json:20090211')
+	testCompile('xmlunit:xmlunit:1.6')
+	testCompile('org.skyscreamer:jsonassert:1.2.3')
+	testCompile("com.github.tomakehurst:wiremock:1.57") {
+		 transitive= false
+	}
+
+}
+
+

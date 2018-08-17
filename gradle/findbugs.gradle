@@ -1,0 +1,33 @@
+
+apply plugin: 'findbugs'
+
+
+findbugs {
+	sourceSets = [sourceSets.main]
+	
+	// TODO: enforce rules!
+	//ignoreFailures = false
+	ignoreFailures = true	
+	
+	effort = "default"
+	reportLevel = "medium"
+	//visitors = ["FindSqlInjection", "SwitchFallthrough"]
+	//omitVisitors = ["FindNonShortCircuit"]
+	includeFilter = file("$rootDir/config/findbugs/findbugs-filter.xml")
+	//excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
+}
+
+ task copyFindbugs(type: Copy)  {
+	 from "$rootDir/config/findbugs/edu.umd.cs.findbugs.core.prefs"
+	 into "${project.projectDir}/.settings/"
+	 expand(project.properties)
+ }
+
+eclipse.project {
+	 natures 'edu.umd.cs.findbugs.plugin.eclipse.findbugsNature'
+	 buildCommand 'edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder'
+  }
+ 
+   
+ eclipseProject.dependsOn copyFindbugs
+

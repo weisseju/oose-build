@@ -1,0 +1,132 @@
+
+// this project uses a different docker plugin
+// to use remote docker hosts
+
+buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.bmuschko:gradle-docker-plugin:3.0.4'
+	}
+}
+
+// workaround for gradle plugin classpath issues
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+//apply plugin: 'com.bmuschko.docker-remote-api'
+
+import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
+
+
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
+
+// configure plugin to use local sockt or remote host based on
+// environment
+docker {
+	if (System.env.DOCKER_HOST) {
+		url = "$System.env.DOCKER_HOST".replace("tcp","https")
+		if (System.env.DOCKER_CERT_PATH) {
+			certPath = new File(System.env.DOCKER_CERT_PATH)
+		}
+	}
+	else {
+		url = 'unix:///var/run/docker.sock'
+	}
+}
+
+
+task createDockerfile(type: Dockerfile) {
+	destFile = project.file('build/docker/Dockerfile')
+}
+
+
+// customize in each project using something like
+//createDockerfile {
+//	dependsOn copyDeb
+//	
+//	from('java:8-jre')
+//	maintainer('oose eG <info@oose.de>')
+//	
+//	String debName = file(buildDeb.outputs.files[0]).name;
+//	
+//	addFile(debName,"/tmp/"+ debName)
+//	runCommand "dpkg -i /tmp/" + debName
+//	exposePort 8090
+//	exposePort 8091
+//	defaultCommand("environmentservice-web")
+//}
+
+
+
+
+
+// call with -PdockerTag=PERFORMANCE to tag for performance etc
+def getDockerTag(project) {
+	return project.hasProperty("dockerTag") ? "${project.dockerTag}" : "${project.version}"
+}
+
+// call with -PdockerRepo=localhost:5000 to push to some registry
+def getDockerRepoPrefix(project) {
+	return project.hasProperty("dockerRepo") ? "${project.dockerRepo}/" : ""
+}
+
+
+task buildDocker(type: DockerBuildImage) {
+	dependsOn createDockerfile
+	inputDir = project.projectDir
+	dockerFile = createDockerfile.destFile
+		
+	tag = "${dockerGroup}/${project.name}:${version}"
+}
+
+
+task createContainer(type: DockerCreateContainer) {
+	dependsOn buildDocker
+	targetImageId { buildDocker.getImageId() }
+	portBindings = ['8085:8080']
+}
+
+task startContainer(type: DockerStartContainer) {
+	dependsOn createContainer
+	targetContainerId { createContainer.getContainerId() }
+}
+
+task stopContainer(type: DockerStopContainer) {
+	targetContainerId { createContainer.getContainerId() }
+}
+
+
+
+// replace the tag with version number with the tag given and prefix with the repo (if any)
+task tagDocker(type: DockerTagImage){
+	def versionOrTag = getDockerTag(project)
+	def dockerRepoPrefix = getDockerRepoPrefix(project)
+	
+	tag = "${versionOrTag}"
+	imageId = "${dockerGroup}/${project.name}:${version}"
+	repository = "${dockerRepoPrefix}${dockerGroup}/${project.name}"
+	force = true
+}
+
+// push the tagged image to a repository. This works only if a repo has been set and used in tagDocker
+task publishDocker(type: DockerPushImage){
+	
+	def versionOrTag = getDockerTag(project)
+	def dockerRepoPrefix = getDockerRepoPrefix(project)
+	
+	tag = "${versionOrTag}"
+
+	if (!dockerRepoPrefix.isEmpty()){
+		imageName = "${dockerRepoPrefix}${dockerGroup}/${project.name}:${versionOrTag}"
+	} else {
+		throw new StopExecutionException("publishDocker not possible, no repo defined")
+	}
+}
+
+tagDocker.dependsOn buildDocker
+publishDocker.dependsOn tagDocker

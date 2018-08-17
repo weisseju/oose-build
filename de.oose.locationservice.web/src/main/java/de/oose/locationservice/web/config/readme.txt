@@ -1,0 +1,1 @@
+http://piotrnowicki.com/2012/06/inject-java-properties-in-java-ee-using-cdi/

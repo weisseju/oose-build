@@ -1,0 +1,12 @@
+apply from: "$rootDir/gradle/docker.gradle"
+
+createDockerfile {
+	dependsOn war
+	
+	from('tomee:8-jre-1.7.4-jaxrs')
+	maintainer('oose eG <info@oose.de>')
+	
+	addFile("build/libs/${project.name}-${version}.war","/usr/local/tomee/webapps/${project.name}.war")
+}
+
+

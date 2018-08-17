@@ -1,0 +1,83 @@
+ext.baseVersion = '1.0.0'
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '3.2'
+}
+
+repositories {
+	mavenCentral()
+}
+  
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+		maven { url "http://repo.spring.io/libs-snapshot" }
+		maven.url "http://repo.spring.io/snapshot"
+        	maven.url "http://repo.spring.io/milestone"
+    		maven { url "https://plugins.gradle.org/m2/" }
+	}
+
+	dependencies {
+		classpath 'de.aaschmid:gradle-cpd-plugin:1.0' 
+		classpath 'com.netflix.nebula:gradle-ospackage-plugin:4.1.0'
+		classpath 'com.netflix.nebula:gradle-override-plugin:3.0.2'
+		
+		classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE'
+		classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.1.1' //4.4.7 migration not so easy.
+		classpath 'se.transmode.gradle:gradle-docker:1.2'
+		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
+	}
+}
+
+apply from: "$rootDir/gradle/version.gradle"
+apply from: "$rootDir/gradle/sonar.gradle"
+
+subprojects {
+	
+	repositories {
+		mavenCentral()
+	}
+	
+	group = 'de.oose'
+		
+	ext {
+		dockerGroup = "oose"
+				
+		springVersion = "4.3.3.RELEASE"
+		springBootVersion = "1.4.1.RELEASE"
+		springCloudVersion = "1.2.0.RELEASE"
+		springDataJpaVersion = "1.10.4.RELEASE"
+		seleniumFirefoxVersion = "2.52.0"
+		seleniumHtmlunitVersion = "2.52.0"
+		gebVersion = "0.13.1"
+		spockVersion = "1.0-groovy-2.4"
+		groovyVersion = "2.4.7"
+		hibernateVersion = "5.2.3.Final"
+		jacksonVersion = "2.5.1"
+		javaxRestApiVersion = "2.0.1"
+		javaxServletApiVersion = "3.1.0"
+		javaxEEApiVersion = "7.0"
+		apacheCxfVersion = "2.6.14"
+	}
+	
+	apply plugin: 'nebula.override'	
+	apply from: "$rootDir/gradle/java.gradle"
+	apply from: "$rootDir/gradle/integrationtest.gradle"
+	apply from: "$rootDir/gradle/longrunningtest.gradle"	
+	apply from: "$rootDir/gradle/acceptancetest.gradle"	
+	apply from: "$rootDir/gradle/vagrant.gradle"
+	apply plugin: 'eclipse'
+	apply from: "$rootDir/gradle/jacoco.gradle"	
+	apply from: "$rootDir/gradle/checkstyle.gradle"
+	apply from: "$rootDir/gradle/jdepend.gradle"
+	apply from: "$rootDir/gradle/findbugs.gradle"
+	apply from: "$rootDir/gradle/cpd.gradle"	
+	apply from: "$rootDir/gradle/artifactoryRepo.gradle"
+	
+	//Add buildship nature. Does not help much until .prefs file is present
+	//Prefs are generated on buildship import.
+	eclipse.project {
+		natures 'org.eclipse.buildship.core.gradleprojectnature'
+	}
+}

@@ -1,0 +1,12 @@
+.gradle/
+.settings/
+build/
+bin/
+.project
+/launchDockerRegistry.sh~
+/fig.yml~
+*.iml
+.idea/
+.vagrant/
+.jenkins-*
+.Xauthority-*

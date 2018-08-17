@@ -1,0 +1,7 @@
+
+apply plugin: 'eclipse-wtp'
+apply from: "$rootDir/gradle/publicationJar.gradle"
+
+dependencies {
+    compile("com.vividsolutions:jts:1.13")
+}
